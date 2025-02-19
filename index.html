@@ -6,6 +6,49 @@
   <title>Ewoud Web - Home (Dark Mode)</title>
   <!-- Include TailwindCSS from CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom CSS for the 3D Rotating Cube Logo -->
+  <style>
+    /* Cube Container: sets up 3D perspective */
+    .cube-container {
+      perspective: 800px;
+      width: 200px;
+      height: 200px;
+      margin: 0 auto; /* Center horizontally */
+    }
+    /* Cube Styles */
+    .cube {
+      width: 200px;
+      height: 200px;
+      position: relative;
+      transform-style: preserve-3d;
+      animation: rotateCube 5s infinite linear;
+    }
+    /* Each face of the cube */
+    .cube div {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+    /* Front face */
+    .front { transform: rotateY(0deg) translateZ(100px); }
+    /* Back face */
+    .back { transform: rotateY(180deg) translateZ(100px); }
+    /* Right face */
+    .right { transform: rotateY(90deg) translateZ(100px); }
+    /* Left face */
+    .left { transform: rotateY(-90deg) translateZ(100px); }
+    /* Top face */
+    .top { transform: rotateX(90deg) translateZ(100px); }
+    /* Bottom face */
+    .bottom { transform: rotateX(-90deg) translateZ(100px); }
+    /* Cube rotation animation */
+    @keyframes rotateCube {
+      0% { transform: rotateY(0deg); }
+      100% { transform: rotateY(360deg); }
+    }
+  </style>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body class="bg-gray-900 text-gray-100">
@@ -28,16 +71,27 @@
   </header>
 
   <!-- Main Content -->
-  <main class="container mx-auto px-6 py-8">
-    <section class="text-center">
-      <h1 class="text-4xl font-bold mb-4">Welcome to Ewoud Web</h1>
-      <p class="mb-6">
-        A showcase of my projects and skills. Explore to learn more about my work and interests.
-      </p>
-      <a href="projects.html" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-        View Projects
-      </a>
-    </section>
+  <main class="container mx-auto px-6 py-8 text-center">
+    <!-- 3D Rotating Logo -->
+    <div class="cube-container mb-8">
+      <div class="cube">
+        <div class="front"></div>
+        <div class="back"></div>
+        <div class="right"></div>
+        <div class="left"></div>
+        <div class="top"></div>
+        <div class="bottom"></div>
+      </div>
+    </div>
+    
+    <!-- Headline and Description -->
+    <h1 class="text-4xl font-bold mb-4">Welcome to Ewoud Web</h1>
+    <p class="mb-6">
+      A showcase of my projects and skills. Explore to learn more about my work and interests.
+    </p>
+    <a href="projects.html" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+      View Projects
+    </a>
   </main>
 
   <!-- Footer -->
