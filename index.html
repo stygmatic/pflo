@@ -3,50 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ewoud Web - Home (Dark Mode)</title>
-  <!-- Include TailwindCSS from CDN -->
+  <title>Ewoud Web - Home (3D Logo)</title>
+  <!-- Include TailwindCSS for overall styling -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Custom CSS for the 3D Rotating Cube Logo -->
+  <!-- Include Three.js -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/build/three.min.js"></script>
+  <!-- Include the STLLoader from Three.js examples -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/examples/js/loaders/STLLoader.js"></script>
   <style>
-    /* Cube Container: sets up 3D perspective */
-    .cube-container {
-      perspective: 800px;
-      width: 200px;
-      height: 200px;
-      margin: 0 auto; /* Center horizontally */
-    }
-    /* Cube Styles */
-    .cube {
-      width: 200px;
-      height: 200px;
-      position: relative;
-      transform-style: preserve-3d;
-      animation: rotateCube 5s infinite linear;
-    }
-    /* Each face of the cube */
-    .cube div {
-      position: absolute;
-      width: 200px;
-      height: 200px;
-      background: rgba(255, 255, 255, 0.1);
-      border: 2px solid rgba(255, 255, 255, 0.2);
-    }
-    /* Front face */
-    .front { transform: rotateY(0deg) translateZ(100px); }
-    /* Back face */
-    .back { transform: rotateY(180deg) translateZ(100px); }
-    /* Right face */
-    .right { transform: rotateY(90deg) translateZ(100px); }
-    /* Left face */
-    .left { transform: rotateY(-90deg) translateZ(100px); }
-    /* Top face */
-    .top { transform: rotateX(90deg) translateZ(100px); }
-    /* Bottom face */
-    .bottom { transform: rotateX(-90deg) translateZ(100px); }
-    /* Cube rotation animation */
-    @keyframes rotateCube {
-      0% { transform: rotateY(0deg); }
-      100% { transform: rotateY(360deg); }
+    /* Style for the 3D logo container */
+    #logo-container {
+      width: 100%;
+      height: 400px;
     }
   </style>
   <link rel="stylesheet" href="css/styles.css" />
@@ -72,17 +40,8 @@
 
   <!-- Main Content -->
   <main class="container mx-auto px-6 py-8 text-center">
-    <!-- 3D Rotating Logo -->
-    <div class="cube-container mb-8">
-      <div class="cube">
-        <div class="front"></div>
-        <div class="back"></div>
-        <div class="right"></div>
-        <div class="left"></div>
-        <div class="top"></div>
-        <div class="bottom"></div>
-      </div>
-    </div>
+    <!-- 3D Logo Container -->
+    <div id="logo-container" class="mb-8"></div>
     
     <!-- Headline and Description -->
     <h1 class="text-4xl font-bold mb-4">Welcome to Ewoud Web</h1>
@@ -100,5 +59,65 @@
       &copy; 2025 Ewoud Van Vooren. All rights reserved.
     </div>
   </footer>
+
+  <!-- Three.js Script for Loading and Rotating the STL Logo -->
+  <script>
+    // Set up the scene, camera, and renderer
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x000000);
+    
+    // Adjust the aspect ratio based on the container's width and height
+    const container = document.getElementById('logo-container');
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+    camera.position.set(0, 0, 100);
+    
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    container.appendChild(renderer.domElement);
+    
+    // Add lights
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
+    
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight.position.set(0, 0, 1);
+    scene.add(directionalLight);
+    
+    // Load the STL file using STLLoader
+    const loader = new THREE.STLLoader();
+    loader.load('models/logo.stl', function (geometry) {
+      // Create a mesh from the geometry and a material
+      const material = new THREE.MeshPhongMaterial({ color: 0x007BFF });
+      const mesh = new THREE.Mesh(geometry, material);
+      
+      // Optionally center and scale the mesh
+      geometry.computeBoundingBox();
+      const center = new THREE.Vector3();
+      geometry.boundingBox.getCenter(center);
+      mesh.geometry.translate(-center.x, -center.y, -center.z);
+      mesh.scale.set(0.5, 0.5, 0.5); // Adjust scaling as needed
+      
+      scene.add(mesh);
+      
+      // Animate the rotation
+      function animate() {
+        requestAnimationFrame(animate);
+        mesh.rotation.y += 0.01;
+        renderer.render(scene, camera);
+      }
+      animate();
+    });
+    
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      renderer.setSize(width, height);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+    });
+  </script>
 </body>
 </html>
